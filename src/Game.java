@@ -6,10 +6,12 @@ import java.util.HashSet;
 public class Game {
 
     private boolean started = false;
+    private boolean gameOver = true;
     private int width;
     private int height;
     private Square[][] board;
     private int numMines;
+    private int safes;
     private HashSet<MineSquare> mines;
 
     Game(int width, int height, int numMines) {
@@ -17,6 +19,7 @@ public class Game {
         this.height = height;
         this.board = new Square[width][height];
         this.numMines = numMines;
+        this.safes = width * height - numMines;
         this.mines = new HashSet<MineSquare>();
     }
 
@@ -26,6 +29,22 @@ public class Game {
 
     public int getHeight() {
         return height;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public int getSafes() {
+        return safes;
+    }
+
+    public HashSet<MineSquare> getMines() {
+        return mines;
     }
 
     public Square[][] getBoard() {
@@ -62,14 +81,68 @@ public class Game {
      * If there are no mines adjacent to it, reveal adjacent squares
      * and so on until there are squares with mines adjacent to them.
      */
-    public void revealSingleSquare(int x, int y) {
+    public void revealSquare(int x, int y) {
         if (!started) {
             generateMines(x, y);
+            started = true;
         }
-        board[x][y] = new SafeSquare(x, y);
+        if (board[x][y] instanceof MineSquare) {
+            gameOver();
+        } else {
+            board[x][y] = new SafeSquare(x, y);
+            ((SafeSquare) board[x][y]).setAdj(checkForMines(x, y));
+            board[x][y].reveal();
+            if (((SafeSquare) board[x][y]).getAdj() == 0) {
+                for (int i = x - 1; i<= x + 1; i++) {
+                    if (i < 0 || i >= width) {
+                        continue;
+                    }
+                    for (int j = y - 1; j <= y + 1; j++) {
+                        if (j < 0 || j >= height) {
+                            continue;
+                        }
+                        if (board[i][j] == null) {
+                            revealSquare(i, j);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Find and return number of mines surrounding a SafeSquare at (x,y)
+     */
+    public int checkForMines(int x, int y) {
+        int mineCount = 0;
+        for (int i = x - 1; i <= x + 1; i++) {
+            if (i < 0 || i >= width) {
+                continue;
+            }
+            for (int j = y - 1; j <= y + 1; j++) {
+                if (j < 0 || j >= height) {
+                    continue;
+                }
+                if (board[i][j] instanceof MineSquare) {
+                    mineCount++;
+                }
+            }
+        }
+        return mineCount;
+    }
+
+    /** Flag an unrevealed square */
+    public void flagSquare(int x, int y) {
+
+        //Can flag a Square if not initialized
+        //OR an initialized Square has not been revealed
+        if (board[x][y] == null || !board[x][y].getRevealed()) {
+            board[x][y] = new Square(x, y);
+            board[x][y].changeFlag();
+        }
     }
 
     public void gameOver() {
-
+        gameOver = true;
     }
 }
