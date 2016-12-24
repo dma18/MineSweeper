@@ -9,11 +9,6 @@ public class Square {
     private boolean flagged = false;
     private boolean revealed = false;
 
-    Square() {
-        x = -1;
-        y = -1;
-    }
-
     Square(int x, int y) {
         this.x = x;
         this.y = y;
@@ -27,11 +22,11 @@ public class Square {
         return y;
     }
 
-    public boolean isFlagged() {
+    public boolean getFlagged() {
         return flagged;
     }
 
-    public boolean isRevealed() {
+    public boolean getRevealed() {
         return revealed;
     }
 
