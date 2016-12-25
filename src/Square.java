@@ -1,7 +1,7 @@
 /**
  * Created by danie on 12/20/2016.
  */
-package minesweeper;
+
 public class Square {
 
     private int x;
@@ -9,7 +9,7 @@ public class Square {
     private boolean flagged = false;
     private boolean revealed = false;
 
-    Square(int x, int y) {
+    public Square(int x, int y) {
         this.x = x;
         this.y = y;
     }

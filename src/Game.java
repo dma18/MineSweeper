@@ -1,7 +1,7 @@
 /**
  * Created by danie on 12/20/2016.
  */
-package minesweeper;
+
 import java.util.HashSet;
 
 public class Game {
@@ -18,7 +18,7 @@ public class Game {
     private int safes;
     private HashSet<MineSquare> mines;
 
-    Game(int width, int height, int numMines) {
+    public Game(int width, int height, int numMines) {
         this.width = width;
         this.height = height;
         this.board = new Square[width][height];

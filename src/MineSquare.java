@@ -1,10 +1,10 @@
 /**
  * Created by danie on 12/20/2016.
  */
-package minesweeper;
-public class MineSquare extends Square{
 
-    MineSquare(int x, int y) {
+public class MineSquare extends Square {
+
+    public MineSquare(int x, int y) {
         super(x, y);
     }
 

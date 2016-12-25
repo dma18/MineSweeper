@@ -1,13 +1,13 @@
 /**
  * Created by danie on 12/20/2016.
  */
-package minesweeper;
+
 public class SafeSquare extends Square {
 
     /**Number of adjacent mines**/
     private int adj;
 
-    SafeSquare(int x, int y) {
+    public SafeSquare(int x, int y) {
         super(x, y);
         adj = 0;
     }
