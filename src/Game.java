@@ -6,7 +6,7 @@ import java.util.HashSet;
 public class Game {
 
     private boolean started = false;
-    private boolean gameOver = true;
+    private boolean gameOver = false;
     private int width;
     private int height;
     private Square[][] board;
@@ -39,10 +39,6 @@ public class Game {
         return gameOver;
     }
 
-    public int getSafes() {
-        return safes;
-    }
-
     public HashSet<MineSquare> getMines() {
         return mines;
     }
@@ -60,6 +56,19 @@ public class Game {
         return numMines;
     }
 
+    public int incNumMines() {
+        numMines++;
+        return numMines;
+    }
+
+    public int getSafes() {
+        return safes;
+    }
+
+    public int decSafes() {
+        safes--;
+        return safes;
+    }
 
     /**First click is always safe.
      * Generate MineSquares based on location of first click and assign to MINES. */
@@ -82,17 +91,26 @@ public class Game {
      * and so on until there are squares with mines adjacent to them.
      */
     public void revealSquare(int x, int y) {
+
+        //First reveal is always safe.  Generate mines if STARTED == false.
         if (!started) {
             generateMines(x, y);
             started = true;
         }
+
+        //Reveal a mine -> GAME OVER.
+        //Reveal a square if null OR Square is not flagged and not revealed
         if (board[x][y] instanceof MineSquare) {
-            gameOver();
-        } else {
+            gameOver(false);
+        } else if (board[x][y] == null ||
+                (!board[x][y].getFlagged() && !board[x][y].getRevealed())) {
             board[x][y] = new SafeSquare(x, y);
             ((SafeSquare) board[x][y]).setAdj(checkForMines(x, y));
             board[x][y].reveal();
-            if (((SafeSquare) board[x][y]).getAdj() == 0) {
+            decSafes();
+            if (safes == 0) {
+                gameOver(true);
+            } else if (((SafeSquare) board[x][y]).getAdj() == 0) {
                 for (int i = x - 1; i<= x + 1; i++) {
                     if (i < 0 || i >= width) {
                         continue;
@@ -115,6 +133,8 @@ public class Game {
      */
     public int checkForMines(int x, int y) {
         int mineCount = 0;
+
+        //Check surrounding squares.  Ignore coordinates that go offboard.
         for (int i = x - 1; i <= x + 1; i++) {
             if (i < 0 || i >= width) {
                 continue;
@@ -134,15 +154,29 @@ public class Game {
     /** Flag an unrevealed square */
     public void flagSquare(int x, int y) {
 
-        //Can flag a Square if not initialized
-        //OR an initialized Square has not been revealed
-        if (board[x][y] == null || !board[x][y].getRevealed()) {
+        //If not initialized -> create new Square and flag it
+        //The Square has not been revealed -> flag the Square
+        if (board[x][y] == null) {
             board[x][y] = new Square(x, y);
+        }
+        if (!board[x][y].getRevealed()){
             board[x][y].changeFlag();
+            decNumMines();
         }
     }
 
-    public void gameOver() {
+    /** Unflag a flagged square */
+    public void unflagSquare(int x, int y) {
+
+        //Can unflag a Square ONLY if initialized and flagged
+        if ((board[x][y] != null) && board[x][y].getFlagged()) {
+            board[x][y].changeFlag();
+            incNumMines();
+        }
+    }
+
+    public void gameOver(boolean win) {
         gameOver = true;
+
     }
 }
