@@ -1,15 +1,19 @@
-import java.util.HashSet;
-
 /**
  * Created by danie on 12/20/2016.
  */
+package minesweeper;
+import java.util.HashSet;
+
 public class Game {
 
-    private boolean started = false;
+    //TODO change STARTED back to private after testing
+    public boolean started = false;
     private boolean gameOver = false;
     private int width;
     private int height;
-    private Square[][] board;
+
+    //TODO change BOARD back to private after testing
+    public Square[][] board;
     private int numMines;
     private int safes;
     private HashSet<MineSquare> mines;
