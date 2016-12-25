@@ -1,4 +1,8 @@
-import org.junit.*;
+package main;
+
+import org.junit.Test;
+import org.junit.Assert.*;
+
 /**
  * Created by danie on 12/24/2016.
  */
