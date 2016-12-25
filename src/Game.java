@@ -6,14 +6,12 @@ import java.util.HashSet;
 
 public class Game {
 
-    //TODO change STARTED back to private after testing
-    public boolean started = false;
+    private boolean started = true;
     private boolean gameOver = false;
     private int width;
     private int height;
-
-    //TODO change BOARD back to private after testing
-    public Square[][] board;
+    
+    private Square[][] board;
     private int numMines;
     private int safes;
     private HashSet<MineSquare> mines;
@@ -102,9 +100,9 @@ public class Game {
             started = true;
         }
 
-        //Reveal a mine -> GAME OVER.
+        //Reveal an unflagged mine -> GAME OVER.
         //Reveal a square if null OR Square is not flagged and not revealed
-        if (board[x][y] instanceof MineSquare) {
+        if (board[x][y] instanceof MineSquare && !board[x][y].getFlagged()) {
             gameOver(false);
         } else if (board[x][y] == null ||
                 (!board[x][y].getFlagged() && !board[x][y].getRevealed())) {
