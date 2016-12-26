@@ -10,7 +10,7 @@ public class Game {
     private boolean gameOver = false;
     private int width;
     private int height;
-    
+
     private Square[][] board;
     private int numMines;
     private int safes;
