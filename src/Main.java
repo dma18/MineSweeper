@@ -15,11 +15,11 @@ public class Main {
     private final int MIN_MINES = 15;
     private final int MAX_MINES = 100;
     private JFrame frame;
-    private JPanel mainPanel, defaultPanel, customPanel, customWidth, customHeight, customMines;
+    private JPanel mainPanel;
     private JSlider width, height, mines;
     private JLabel currWidth, currHeight, currMines;
-    private JButton easy, medium, difficult, custom;
-    private Square[][] squares;
+    private JButton easy, medium, difficult, back;
+    private Game game;
     private GridLayout field;
 
     public static void main(String[] args) {
@@ -28,17 +28,23 @@ public class Main {
     }
 
     void go() {
+        if (frame != null && mainPanel != null) {
+            frame.removeAll();
+            frame.repaint();
+            frame.revalidate();
+            frame.add(mainPanel);
+        }
         frame = new JFrame();
         mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setMaximumSize(new Dimension(500, 400));
-        defaultPanel = new JPanel();
+        JPanel defaultPanel = new JPanel();
         defaultPanel.setLayout(new BoxLayout(defaultPanel, BoxLayout.Y_AXIS));
-        customPanel = new JPanel();
+        JPanel customPanel = new JPanel();
         customPanel.setLayout(new BoxLayout(customPanel, BoxLayout.Y_AXIS));
-        customWidth = new JPanel();
-        customHeight = new JPanel();
-        customMines = new JPanel();
+        JPanel customWidth = new JPanel();
+        JPanel customHeight = new JPanel();
+        JPanel customMines = new JPanel();
         customWidth.setLayout(new FlowLayout(FlowLayout.LEFT));
         customHeight.setLayout(new FlowLayout(FlowLayout.LEFT));
         customMines.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -59,7 +65,7 @@ public class Main {
         easy = new JButton("Easy Mode: 9 x 9");
         medium = new JButton("Medium Mode: 16 x 16");
         difficult = new JButton("Difficult Mode: 20 x 30");
-        custom = new JButton("Custom Mode");
+        JButton custom = new JButton("Custom Mode");
         width = new JSlider(JSlider.HORIZONTAL, MIN_DIM, MAX_DIM, MIN_DIM);
         width.addChangeListener(new CustomChangeListener());
         height = new JSlider(JSlider.HORIZONTAL, MIN_DIM, MAX_DIM, MIN_DIM);
@@ -118,13 +124,17 @@ public class Main {
         mainPanel.add(customPanel);
 
         frame.getContentPane().add(mainPanel);
-        frame.setSize(new Dimension(500, 500));
+        frame.setSize(new Dimension(1000, 1000));
         frame.setVisible(true);
     }
 
     void startGame(int width, int height, int numMines) {
-        frame = new JFrame();
-        squares = new Square[width][height];
+        frame.remove(mainPanel);
+        frame.repaint();
+        frame.revalidate();
+        game = new Game(width, height, numMines);
+
+
     }
 
     class DefaultListener implements ActionListener {
@@ -157,18 +167,6 @@ public class Main {
                 currMines.setText(Integer.toString(source.getValue()));
             }
         }
-    }
-
-    void gameEasy() {
-        startGame(9, 9, 10);
-    }
-
-    void gameMedium() {
-        startGame(16, 16, 40);
-    }
-
-    void gameDifficult() {
-        startGame(30, 30, 99);
     }
 
 }
