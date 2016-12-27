@@ -2,6 +2,8 @@
  * Created by danie on 12/23/2016.
  */
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,11 +13,13 @@ public class Main {
     private final int MIN_DIM = 10;
     private final int MAX_DIM = 30;
     private final int MIN_MINES = 15;
-    private final int MAX_MINES = 15;
+    private final int MAX_MINES = 100;
     private JFrame frame;
     private JPanel mainPanel, defaultPanel, customPanel, customWidth, customHeight, customMines;
+    private JSlider width, height, mines;
     private JLabel currWidth, currHeight, currMines;
-    private JButton[][] squares;
+    private JButton easy, medium, difficult, custom;
+    private Square[][] squares;
     private GridLayout field;
 
     public static void main(String[] args) {
@@ -52,17 +56,20 @@ public class Main {
         frame.setTitle("MineSweeper");
 
         JLabel welcome = new JLabel("Welcome to MineSweeper!");
-        JButton easy = new JButton("Easy Mode: 9 x 9");
-        JButton medium = new JButton("Medium Mode: 16 x 16");
-        JButton difficult = new JButton("Difficult Mode: 30 x 30");
-        JButton custom = new JButton("Custom Mode");
-        JSlider width = new JSlider(JSlider.HORIZONTAL, MIN_DIM, MAX_DIM, MIN_DIM);
-        JSlider height = new JSlider(JSlider.HORIZONTAL, MIN_DIM, MAX_DIM, MIN_DIM);
-        JSlider mines = new JSlider(JSlider.HORIZONTAL, 15, 100, 15);
+        easy = new JButton("Easy Mode: 9 x 9");
+        medium = new JButton("Medium Mode: 16 x 16");
+        difficult = new JButton("Difficult Mode: 20 x 30");
+        custom = new JButton("Custom Mode");
+        width = new JSlider(JSlider.HORIZONTAL, MIN_DIM, MAX_DIM, MIN_DIM);
+        width.addChangeListener(new CustomChangeListener());
+        height = new JSlider(JSlider.HORIZONTAL, MIN_DIM, MAX_DIM, MIN_DIM);
+        height.addChangeListener(new CustomChangeListener());
+        mines = new JSlider(JSlider.HORIZONTAL, MIN_MINES, MAX_MINES, MIN_MINES);
+        mines.addChangeListener(new CustomChangeListener());
 
-        easy.addActionListener(new EasyListener());
-        medium.addActionListener(new MedListener());
-        difficult.addActionListener(new DiffListener());
+        easy.addActionListener(new DefaultListener());
+        medium.addActionListener(new DefaultListener());
+        difficult.addActionListener(new DefaultListener());
         custom.addActionListener(new CustomListener());
 
         welcome.setFont(new Font("Arial", Font.BOLD, 20));
@@ -111,36 +118,44 @@ public class Main {
         mainPanel.add(customPanel);
 
         frame.getContentPane().add(mainPanel);
+        frame.setSize(new Dimension(500, 500));
         frame.setVisible(true);
-        frame.setSize(500, 500);
     }
 
     void startGame(int width, int height, int numMines) {
         frame = new JFrame();
-        squares = new JButton[width][height];
+        squares = new Square[width][height];
     }
 
-    class EasyListener implements ActionListener {
+    class DefaultListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            startGame(9, 9, 10);
-        }
-    }
-
-    class MedListener implements ActionListener {
-        public void actionPerformed(ActionEvent event) {
-            startGame(16, 16, 40);
-        }
-    }
-
-    class DiffListener implements ActionListener {
-        public void actionPerformed(ActionEvent event) {
-            startGame(30, 30, 99);
+            JButton source = (JButton) event.getSource();
+            if (source.equals(easy)) {
+                startGame(9, 9, 10);
+            } else if (source.equals(medium)) {
+                startGame(16, 16, 40);
+            } else if (source.equals(difficult)) {
+                startGame(20, 30, 99);
+            }
         }
     }
 
     class CustomListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
+            startGame(width.getValue(), height.getValue(), mines.getValue());
+        }
+    }
 
+    class CustomChangeListener implements ChangeListener {
+        public void stateChanged(ChangeEvent e) {
+            JSlider source = (JSlider) e.getSource();
+            if (source.equals(width)) {
+                currWidth.setText(Integer.toString(source.getValue()));
+            } else if (source.equals(height)) {
+                currHeight.setText(Integer.toString(source.getValue()));
+            } else if (source.equals(mines)) {
+                currMines.setText(Integer.toString(source.getValue()));
+            }
         }
     }
 
