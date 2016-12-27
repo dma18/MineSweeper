@@ -19,7 +19,12 @@ public class Game {
     public Game(int width, int height, int numMines) {
         this.width = width;
         this.height = height;
-        this.board = new Square[width][height];
+        board = new Square[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                board[i][j] = new Square(i, j);
+            }
+        }
         this.numMines = numMines;
         this.safes = width * height - numMines;
         this.mines = new HashSet<MineSquare>();
@@ -47,6 +52,10 @@ public class Game {
 
     public Square[][] getBoard() {
         return board;
+    }
+
+    public void setBoard(int x, int y, Square s) {
+        board[x][y] = s;
     }
 
     public int getNumMines() {
@@ -101,11 +110,10 @@ public class Game {
         }
 
         //Reveal an unflagged mine -> GAME OVER.
-        //Reveal a square if null OR Square is not flagged and not revealed
+        //Reveal a square if Square is not flagged and not revealed
         if (board[x][y] instanceof MineSquare && !board[x][y].getFlagged()) {
             gameOver(false);
-        } else if (board[x][y] == null ||
-                (!board[x][y].getFlagged() && !board[x][y].getRevealed())) {
+        } else if (!board[x][y].getFlagged() && !board[x][y].getRevealed()) {
             board[x][y] = new SafeSquare(x, y);
             ((SafeSquare) board[x][y]).setAdj(checkForMines(x, y));
             board[x][y].reveal();
@@ -121,7 +129,7 @@ public class Game {
                         if (j < 0 || j >= height) {
                             continue;
                         }
-                        if (board[i][j] == null) {
+                        if (!board[i][j].getRevealed()) {
                             revealSquare(i, j);
                         }
                     }
@@ -158,9 +166,6 @@ public class Game {
 
         //If not initialized -> create new Square and flag it
         //The Square has not been revealed -> flag the Square
-        if (board[x][y] == null) {
-            board[x][y] = new Square(x, y);
-        }
         if (!board[x][y].getRevealed()){
             board[x][y].changeFlag();
             decNumMines();
@@ -170,15 +175,14 @@ public class Game {
     /** Unflag a flagged square */
     public void unflagSquare(int x, int y) {
 
-        //Can unflag a Square ONLY if initialized and flagged
-        if ((board[x][y] != null) && board[x][y].getFlagged()) {
+        //Can unflag a Square ONLY if flagged
+        if (board[x][y].getFlagged()) {
             board[x][y].changeFlag();
             incNumMines();
         }
     }
 
     public void gameOver(boolean win) {
-        gameOver = true;
-
+        gameOver = win;
     }
 }
