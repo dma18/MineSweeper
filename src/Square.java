@@ -1,8 +1,10 @@
+import javax.swing.*;
+
 /**
  * Created by danie on 12/20/2016.
  */
 
-public class Square {
+public class Square extends JButton {
 
     private int x;
     private int y;
