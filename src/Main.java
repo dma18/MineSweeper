@@ -129,11 +129,10 @@ public class Main {
     }
 
     void startGame(int width, int height, int numMines) {
-        frame.remove(mainPanel);
+        frame.removeAll();
         frame.repaint();
         frame.revalidate();
         game = new Game(width, height, numMines);
-
 
     }
 

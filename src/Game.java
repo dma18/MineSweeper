@@ -2,6 +2,9 @@
  * Created by danie on 12/20/2016.
  */
 
+import javax.swing.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashSet;
 
 public class Game {
@@ -22,7 +25,29 @@ public class Game {
         board = new Square[width][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                board[i][j] = new Square(i, j);
+                Square button = new Square(i, j);
+                board[i][j] = button;
+                button.addMouseListener(new MouseListener() {
+                    public void mouseClicked(MouseEvent e) {
+                        if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
+                            button.changeFlag();
+                        } else if (SwingUtilities.isLeftMouseButton(e) &&
+                                e.getClickCount() == 1 && !button.getRevealed()) {
+                            button.reveal();
+                        }
+                    }
+                   public void mousePressed(MouseEvent e) {
+                   }
+
+                   public void mouseReleased(MouseEvent e) {
+                   }
+
+                   public void mouseEntered(MouseEvent e) {
+                   }
+
+                   public void mouseExited(MouseEvent e) {
+                   }
+                });
             }
         }
         this.numMines = numMines;
@@ -114,13 +139,12 @@ public class Game {
         if (board[x][y] instanceof MineSquare && !board[x][y].getFlagged()) {
             gameOver(false);
         } else if (!board[x][y].getFlagged() && !board[x][y].getRevealed()) {
-            board[x][y] = new SafeSquare(x, y);
-            ((SafeSquare) board[x][y]).setAdj(checkForMines(x, y));
+            board[x][y].setAdj(checkForMines(x, y));
             board[x][y].reveal();
             decSafes();
             if (safes == 0) {
                 gameOver(true);
-            } else if (((SafeSquare) board[x][y]).getAdj() == 0) {
+            } else if (board[x][y].getAdj() == 0) {
                 for (int i = x - 1; i<= x + 1; i++) {
                     if (i < 0 || i >= width) {
                         continue;
