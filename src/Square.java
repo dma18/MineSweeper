@@ -12,6 +12,7 @@ public class Square extends JToggleButton {
     private boolean flagged = false;
     private boolean revealed = false;
 
+    //TODO Set icons
     public Square(int x, int y) {
         this.x = x;
         this.y = y;
@@ -25,11 +26,11 @@ public class Square extends JToggleButton {
         return y;
     }
 
-    public boolean getFlagged() {
+    public boolean isFlagged() {
         return flagged;
     }
 
-    public boolean getRevealed() {
+    public boolean isRevealed() {
         return revealed;
     }
 
