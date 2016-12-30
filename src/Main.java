@@ -7,6 +7,8 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class Main {
 
@@ -129,11 +131,34 @@ public class Main {
     }
 
     void startGame(int width, int height, int numMines) {
-        frame.removeAll();
+        frame.getContentPane().removeAll();
+        game = new Game(width, height, numMines);
+        System.out.println("Creating game...");
+        JPanel gamePanel = new JPanel();
+        gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.Y_AXIS));
+        JPanel infoPanel = new JPanel();
+        System.out.println("Setting up panels.");
+
+        JPanel mines = new JPanel();
+        mines.add(game.getMineLabel());
+        infoPanel.add(mines);
+
+        JPanel fieldPanel = new JPanel();
+        fieldPanel.setMaximumSize(new Dimension(width * Square.side(), height * Square.side()));
+        fieldPanel.setMinimumSize(new Dimension(width * Square.side(), height * Square.side()));
+        fieldPanel.setLayout(new GridLayout(height, width));
+        for (int i = 0; i < width; i++) {
+            for (int j= 0; j < height; j++) {
+                fieldPanel.add(game.getBoard()[i][j]);
+            }
+        }
+        gamePanel.add(infoPanel);
+        gamePanel.add(Box.createRigidArea(new Dimension(10, 30)));
+        gamePanel.add(fieldPanel);
+        frame.add(gamePanel);
         frame.repaint();
         frame.revalidate();
-        game = new Game(width, height, numMines);
-
+        frame.pack();
     }
 
     class DefaultListener implements ActionListener {

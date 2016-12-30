@@ -10,13 +10,14 @@ import java.util.HashSet;
 
 public class Game {
 
-    private boolean started = true;
+    private boolean started = false;
     private boolean gameOver = false;
     private int width;
     private int height;
 
     private Square[][] board;
     private int numMines;
+    private JLabel mineLabel;
     private int safes;
     private HashSet<MineSquare> mines;
 
@@ -24,20 +25,33 @@ public class Game {
         this.width = width;
         this.height = height;
         board = new Square[width][height];
+        mineLabel = new JLabel(Integer.toString(numMines));
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 Square button = new Square(i, j);
                 board[i][j] = button;
-                button.setBorderPainted(true);
                 button.setMaximumSize(new Dimension(30, 30));
                 button.setMinimumSize(new Dimension(30, 30));
                 button.addMouseListener(new MouseListener() {
                     public void mouseClicked(MouseEvent e) {
-                        if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
-                            button.changeFlag();
+                        if (gameOver) {
+
+                        } else if (SwingUtilities.isRightMouseButton(e) &&
+                                e.getClickCount() == 1 && !button.isRevealed()) {
+                            if (!button.isFlagged()) {
+                                flagSquare(button.getX(), button.getY());
+                            } else {
+                                unflagSquare(button.getX(), button.getY());
+                            }
                         } else if (SwingUtilities.isLeftMouseButton(e) &&
-                                e.getClickCount() == 1) {
-                            button.reveal();
+                                e.getClickCount() == 1 &&
+                                !button.isRevealed()) {
+                            revealSquare(button.getX(), button.getY());
+                        } else if (SwingUtilities.isLeftMouseButton(e) &&
+                                e.getClickCount() == 1 && button.isRevealed()) {
+                            button.setSelected(true);
+                        } else {
+                            return;
                         }
                     }
                    public void mousePressed(MouseEvent e) {
@@ -91,6 +105,10 @@ public class Game {
         return numMines;
     }
 
+    public JLabel getMineLabel() {
+        return mineLabel;
+    }
+
     public int decNumMines() {
         numMines--;
         return numMines;
@@ -131,7 +149,6 @@ public class Game {
      * and so on until there are squares with mines adjacent to them.
      */
     public void revealSquare(int x, int y) {
-
         //First reveal is always safe.  Generate mines if STARTED == false.
         if (!started) {
             generateMines(x, y);
@@ -197,6 +214,7 @@ public class Game {
         if (!board[x][y].isRevealed()){
             board[x][y].changeFlag();
             decNumMines();
+            mineLabel.setText(Integer.toString(numMines));
         }
     }
 
@@ -207,10 +225,24 @@ public class Game {
         if (board[x][y].isFlagged()) {
             board[x][y].changeFlag();
             incNumMines();
+            mineLabel.setText(Integer.toString(numMines));
         }
     }
 
     public void gameOver(boolean win) {
         gameOver = win;
+        JFrame end = new JFrame();
+        JLabel endLabel = new JLabel();
+        if (win) {
+            end.setTitle("You won!");
+            endLabel.setText("You won!");
+        } else {
+            end.setTitle("You lose!");
+            endLabel.setText("You lost!");
+        }
+        end.add(BorderLayout.CENTER, endLabel);
+        end.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        end.pack();
+        end.setVisible(true);
     }
 }
