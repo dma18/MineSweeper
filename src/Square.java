@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by danie on 12/20/2016.
@@ -6,6 +7,7 @@ import javax.swing.*;
 
 public class Square extends JToggleButton {
 
+    private static final int SIDE = 30;
     private int x;
     private int y;
     private int adj;
@@ -14,8 +16,12 @@ public class Square extends JToggleButton {
 
     //TODO Set icons
     public Square(int x, int y) {
+        super();
         this.x = x;
         this.y = y;
+        setIcon(new ImageIcon(this.getClass().getResource("/unrevealed.jpg")));
+        setDisabledIcon(new ImageIcon(this.getClass().getResource("/flag.png")));
+        setSize(new Dimension(SIDE, SIDE));
     }
 
     public int getX() {
@@ -24,6 +30,10 @@ public class Square extends JToggleButton {
 
     public int getY() {
         return y;
+    }
+
+    public static int side() {
+        return SIDE;
     }
 
     public boolean isFlagged() {
@@ -35,7 +45,7 @@ public class Square extends JToggleButton {
     }
 
     public boolean changeFlag() {
-        if (flagged) {
+        if (!flagged) {
             setEnabled(false);
         } else {
             setEnabled(true);
