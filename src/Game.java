@@ -3,6 +3,7 @@
  */
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashSet;
@@ -27,12 +28,15 @@ public class Game {
             for (int j = 0; j < height; j++) {
                 Square button = new Square(i, j);
                 board[i][j] = button;
+                button.setBorderPainted(true);
+                button.setMaximumSize(new Dimension(30, 30));
+                button.setMinimumSize(new Dimension(30, 30));
                 button.addMouseListener(new MouseListener() {
                     public void mouseClicked(MouseEvent e) {
                         if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
                             button.changeFlag();
                         } else if (SwingUtilities.isLeftMouseButton(e) &&
-                                e.getClickCount() == 1 && !button.getRevealed()) {
+                                e.getClickCount() == 1) {
                             button.reveal();
                         }
                     }
@@ -111,8 +115,8 @@ public class Game {
     public void generateMines(int x, int y) {
         int n = numMines;
         while (n > 0) {
-            int tempX = (int) (Math.random() * x);
-            int tempY = (int) (Math.random() * y);
+            int tempX = (int) (Math.random() * width);
+            int tempY = (int) (Math.random() * height);
             if ((tempX != x || tempY != y) && !(board[tempX][tempY] instanceof MineSquare)) {
                 MineSquare mine = new MineSquare(tempX, tempY);
                 board[tempX][tempY] = mine;
@@ -136,9 +140,9 @@ public class Game {
 
         //Reveal an unflagged mine -> GAME OVER.
         //Reveal a square if Square is not flagged and not revealed
-        if (board[x][y] instanceof MineSquare && !board[x][y].getFlagged()) {
+        if (board[x][y] instanceof MineSquare && !board[x][y].isFlagged()) {
             gameOver(false);
-        } else if (!board[x][y].getFlagged() && !board[x][y].getRevealed()) {
+        } else if (!board[x][y].isFlagged() && !board[x][y].isRevealed()) {
             board[x][y].setAdj(checkForMines(x, y));
             board[x][y].reveal();
             decSafes();
@@ -153,7 +157,7 @@ public class Game {
                         if (j < 0 || j >= height) {
                             continue;
                         }
-                        if (!board[i][j].getRevealed()) {
+                        if (!board[i][j].isRevealed()) {
                             revealSquare(i, j);
                         }
                     }
@@ -190,7 +194,7 @@ public class Game {
 
         //If not initialized -> create new Square and flag it
         //The Square has not been revealed -> flag the Square
-        if (!board[x][y].getRevealed()){
+        if (!board[x][y].isRevealed()){
             board[x][y].changeFlag();
             decNumMines();
         }
@@ -200,7 +204,7 @@ public class Game {
     public void unflagSquare(int x, int y) {
 
         //Can unflag a Square ONLY if flagged
-        if (board[x][y].getFlagged()) {
+        if (board[x][y].isFlagged()) {
             board[x][y].changeFlag();
             incNumMines();
         }
