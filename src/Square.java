@@ -13,6 +13,7 @@ public class Square extends JToggleButton {
     private int adj;
     private boolean flagged = false;
     private boolean revealed = false;
+    private boolean isMine = false;
 
     //TODO Set icons
     public Square(int x, int y) {
@@ -21,7 +22,6 @@ public class Square extends JToggleButton {
         this.y = y;
         setIcon(new ImageIcon(this.getClass().getResource("/unrevealed.jpg")));
         setDisabledIcon(new ImageIcon(this.getClass().getResource("/flag.png")));
-        setSize(new Dimension(SIDE, SIDE));
     }
 
     public int getX() {
@@ -34,6 +34,14 @@ public class Square extends JToggleButton {
 
     public static int side() {
         return SIDE;
+    }
+
+    public void setMine() {
+        isMine = true;
+    }
+
+    public boolean isMine() {
+        return isMine;
     }
 
     public boolean isFlagged() {
@@ -54,6 +62,8 @@ public class Square extends JToggleButton {
         return flagged;
     }
 
+
+
     public void reveal() {
         setSelected(true);
         revealed = true;
@@ -65,5 +75,7 @@ public class Square extends JToggleButton {
 
     public void setAdj(int i) {
         adj = i;
+        setSelectedIcon(new ImageIcon(
+                this.getClass().getResource("/adj" + Integer.toString(i) + ".png")));
     }
 }

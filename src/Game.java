@@ -19,7 +19,7 @@ public class Game {
     private int numMines;
     private JLabel mineLabel;
     private int safes;
-    private HashSet<MineSquare> mines;
+    private HashSet<Square> mines;
 
     public Game(int width, int height, int numMines) {
         this.width = width;
@@ -37,18 +37,17 @@ public class Game {
                         if (gameOver) {
 
                         } else if (SwingUtilities.isRightMouseButton(e) &&
-                                e.getClickCount() == 1 && !button.isRevealed()) {
+                            !button.isRevealed()) {
                             if (!button.isFlagged()) {
                                 flagSquare(button.getX(), button.getY());
                             } else {
                                 unflagSquare(button.getX(), button.getY());
                             }
                         } else if (SwingUtilities.isLeftMouseButton(e) &&
-                                e.getClickCount() == 1 &&
                                 !button.isRevealed()) {
                             revealSquare(button.getX(), button.getY());
                         } else if (SwingUtilities.isLeftMouseButton(e) &&
-                                e.getClickCount() == 1 && button.isRevealed()) {
+                            button.isRevealed()) {
                             button.setSelected(true);
                         } else {
                             return;
@@ -70,7 +69,7 @@ public class Game {
         }
         this.numMines = numMines;
         this.safes = width * height - numMines;
-        this.mines = new HashSet<MineSquare>();
+        this.mines = new HashSet<Square>();
     }
 
     public int getWidth() {
@@ -89,7 +88,7 @@ public class Game {
         return gameOver;
     }
 
-    public HashSet<MineSquare> getMines() {
+    public HashSet<Square> getMines() {
         return mines;
     }
 
@@ -135,10 +134,11 @@ public class Game {
         while (n > 0) {
             int tempX = (int) (Math.random() * width);
             int tempY = (int) (Math.random() * height);
-            if ((tempX != x || tempY != y) && !(board[tempX][tempY] instanceof MineSquare)) {
-                MineSquare mine = new MineSquare(tempX, tempY);
-                board[tempX][tempY] = mine;
-                mines.add(mine);
+            if ((tempX != x || tempY != y) && !(board[tempX][tempY].isMine())) {
+                board[tempX][tempY].setMine();
+                board[tempX][tempY].setSelectedIcon(new ImageIcon(
+                        this.getClass().getResource("/mine.png")));
+                mines.add(board[tempX][tempY]);
                 n--;
             }
         }
@@ -157,7 +157,7 @@ public class Game {
 
         //Reveal an unflagged mine -> GAME OVER.
         //Reveal a square if Square is not flagged and not revealed
-        if (board[x][y] instanceof MineSquare && !board[x][y].isFlagged()) {
+        if (board[x][y].isMine() && !board[x][y].isFlagged()) {
             gameOver(false);
         } else if (!board[x][y].isFlagged() && !board[x][y].isRevealed()) {
             board[x][y].setAdj(checkForMines(x, y));
@@ -198,7 +198,7 @@ public class Game {
                 if (j < 0 || j >= height) {
                     continue;
                 }
-                if (board[i][j] instanceof MineSquare) {
+                if (board[i][j].isMine()) {
                     mineCount++;
                 }
             }
@@ -243,6 +243,7 @@ public class Game {
         end.add(BorderLayout.CENTER, endLabel);
         end.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         end.pack();
+        end.setLocationRelativeTo(null);
         end.setVisible(true);
     }
 }

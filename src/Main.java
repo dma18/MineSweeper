@@ -17,12 +17,12 @@ public class Main {
     private final int MIN_MINES = 15;
     private final int MAX_MINES = 100;
     private JFrame frame;
+    private JFrame gameFrame;
     private JPanel mainPanel;
     private JSlider width, height, mines;
     private JLabel currWidth, currHeight, currMines;
     private JButton easy, medium, difficult, back;
     private Game game;
-    private GridLayout field;
 
     public static void main(String[] args) {
         Main game = new Main();
@@ -131,34 +131,37 @@ public class Main {
     }
 
     void startGame(int width, int height, int numMines) {
-        frame.getContentPane().removeAll();
+        frame.setVisible(false);
+        gameFrame = new JFrame("MineSweeper");
         game = new Game(width, height, numMines);
         System.out.println("Creating game...");
         JPanel gamePanel = new JPanel();
         gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.Y_AXIS));
         JPanel infoPanel = new JPanel();
-        System.out.println("Setting up panels.");
 
         JPanel mines = new JPanel();
+        mines.add(new JLabel(new ImageIcon(
+                this.getClass().getResource("/mine.png"))));
         mines.add(game.getMineLabel());
         infoPanel.add(mines);
 
         JPanel fieldPanel = new JPanel();
+        fieldPanel.setLayout(new GridLayout(height, width));
         fieldPanel.setMaximumSize(new Dimension(width * Square.side(), height * Square.side()));
         fieldPanel.setMinimumSize(new Dimension(width * Square.side(), height * Square.side()));
-        fieldPanel.setLayout(new GridLayout(height, width));
         for (int i = 0; i < width; i++) {
             for (int j= 0; j < height; j++) {
                 fieldPanel.add(game.getBoard()[i][j]);
             }
         }
         gamePanel.add(infoPanel);
-        gamePanel.add(Box.createRigidArea(new Dimension(10, 30)));
+        gamePanel.add(Box.createRigidArea(new Dimension(width * Square.side(), 30)));
         gamePanel.add(fieldPanel);
-        frame.add(gamePanel);
-        frame.repaint();
-        frame.revalidate();
-        frame.pack();
+        gameFrame.add(gamePanel);
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gameFrame.setVisible(true);
+        gameFrame.pack();
+        gameFrame.setLocationRelativeTo(null);
     }
 
     class DefaultListener implements ActionListener {
