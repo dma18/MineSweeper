@@ -3,6 +3,7 @@
  */
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -30,13 +31,13 @@ public class Game {
             for (int j = 0; j < height; j++) {
                 Square button = new Square(i, j);
                 board[i][j] = button;
-                button.setMaximumSize(new Dimension(30, 30));
-                button.setMinimumSize(new Dimension(30, 30));
+                //button.setMaximumSize(new Dimension(30, 30));
+                //button.setMinimumSize(new Dimension(30, 30));
+                button.setPreferredSize(new Dimension(30, 30));
+                button.setBorder(new LineBorder(Color.black));
                 button.addMouseListener(new MouseListener() {
                     public void mouseClicked(MouseEvent e) {
-                        if (gameOver) {
-
-                        } else if (SwingUtilities.isRightMouseButton(e) &&
+                        if (SwingUtilities.isRightMouseButton(e) &&
                             !button.isRevealed()) {
                             if (!button.isFlagged()) {
                                 flagSquare(button.getX(), button.getY());
@@ -113,18 +114,16 @@ public class Game {
         return numMines;
     }
 
-    public int incNumMines() {
+    public void incNumMines() {
         numMines++;
-        return numMines;
     }
 
     public int getSafes() {
         return safes;
     }
 
-    public int decSafes() {
+    public void decSafes() {
         safes--;
-        return safes;
     }
 
     /**First click is always safe.
@@ -158,6 +157,7 @@ public class Game {
         //Reveal an unflagged mine -> GAME OVER.
         //Reveal a square if Square is not flagged and not revealed
         if (board[x][y].isMine() && !board[x][y].isFlagged()) {
+            board[x][y].reveal();
             gameOver(false);
         } else if (!board[x][y].isFlagged() && !board[x][y].isRevealed()) {
             board[x][y].setAdj(checkForMines(x, y));
@@ -231,6 +231,9 @@ public class Game {
 
     public void gameOver(boolean win) {
         gameOver = win;
+        for (Square s : mines) {
+            s.reveal();
+        }
         JFrame end = new JFrame();
         JLabel endLabel = new JLabel();
         if (win) {
@@ -245,5 +248,6 @@ public class Game {
         end.pack();
         end.setLocationRelativeTo(null);
         end.setVisible(true);
+        //Main.getGameFrame().getContentPane().removeAll();
     }
 }
