@@ -34,19 +34,19 @@ public class Game {
                 //button.setMaximumSize(new Dimension(30, 30));
                 //button.setMinimumSize(new Dimension(30, 30));
                 button.setPreferredSize(new Dimension(30, 30));
-                button.setBorder(new LineBorder(Color.black));
+                button.setBorder(new LineBorder(Color.darkGray));
                 button.addMouseListener(new MouseListener() {
                     public void mouseClicked(MouseEvent e) {
                         if (SwingUtilities.isRightMouseButton(e) &&
                             !button.isRevealed()) {
-                            if (!button.isFlagged()) {
-                                flagSquare(button.getX(), button.getY());
+                            if (!button.isFlagged() && numMines > 0) {
+                                flagSquare(button.getXVal(), button.getYVal());
                             } else {
-                                unflagSquare(button.getX(), button.getY());
+                                unflagSquare(button.getXVal(), button.getYVal());
                             }
                         } else if (SwingUtilities.isLeftMouseButton(e) &&
                                 !button.isRevealed()) {
-                            revealSquare(button.getX(), button.getY());
+                            revealSquare(button.getXVal(), button.getYVal());
                         } else if (SwingUtilities.isLeftMouseButton(e) &&
                             button.isRevealed()) {
                             button.setSelected(true);

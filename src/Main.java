@@ -2,14 +2,11 @@
  * Created by danie on 12/23/2016.
  */
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class Main {
 
@@ -155,10 +152,10 @@ public class Main {
         fieldPanel.setMaximumSize(new Dimension(width * Square.side(), height * Square.side()));
         fieldPanel.setMinimumSize(new Dimension(width * Square.side(), height * Square.side()));
         fieldPanel.setPreferredSize(new Dimension(width * Square.side(), height * Square.side()));
-        fieldPanel.setBorder(new LineBorder(Color.black));
         for (int i = 0; i < height; i++) {
             for (int j= 0; j < width; j++) {
                 fieldPanel.add(game.getBoard()[j][i]);
+                //fieldPanel.add(new JToggleButton());
             }
         }
         gamePanel.add(BorderLayout.NORTH, infoPanel);

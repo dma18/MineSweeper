@@ -24,11 +24,11 @@ public class Square extends JToggleButton {
         setDisabledIcon(new ImageIcon(this.getClass().getResource("/flag.png")));
     }
 
-    public int getX() {
+    public int getXVal() {
         return x;
     }
 
-    public int getY() {
+    public int getYVal() {
         return y;
     }
 
@@ -61,8 +61,6 @@ public class Square extends JToggleButton {
         flagged = !flagged;
         return flagged;
     }
-
-
 
     public void reveal() {
         setSelected(true);
