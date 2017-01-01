@@ -2,6 +2,7 @@
  * Created by danie on 12/23/2016.
  */
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -17,12 +18,16 @@ public class Main {
     private final int MIN_MINES = 15;
     private final int MAX_MINES = 100;
     private JFrame frame;
-    private JFrame gameFrame;
+    private static JFrame gameFrame;
     private JPanel mainPanel;
     private JSlider width, height, mines;
     private JLabel currWidth, currHeight, currMines;
     private JButton easy, medium, difficult, back;
     private Game game;
+
+    public static JFrame getGameFrame() {
+        return gameFrame;
+    }
 
     public static void main(String[] args) {
         Main game = new Main();
@@ -60,7 +65,7 @@ public class Main {
         currHeight = new JLabel(Integer.toString(MIN_DIM));
         currMines = new JLabel(Integer.toString(MIN_MINES));
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setTitle("MineSweeper");
 
         JLabel welcome = new JLabel("Welcome to MineSweeper!");
@@ -136,7 +141,7 @@ public class Main {
         game = new Game(width, height, numMines);
         System.out.println("Creating game...");
         JPanel gamePanel = new JPanel();
-        gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.Y_AXIS));
+        gamePanel.setLayout(new BorderLayout());
         JPanel infoPanel = new JPanel();
 
         JPanel mines = new JPanel();
@@ -149,19 +154,24 @@ public class Main {
         fieldPanel.setLayout(new GridLayout(height, width));
         fieldPanel.setMaximumSize(new Dimension(width * Square.side(), height * Square.side()));
         fieldPanel.setMinimumSize(new Dimension(width * Square.side(), height * Square.side()));
-        for (int i = 0; i < width; i++) {
-            for (int j= 0; j < height; j++) {
-                fieldPanel.add(game.getBoard()[i][j]);
+        fieldPanel.setPreferredSize(new Dimension(width * Square.side(), height * Square.side()));
+        fieldPanel.setBorder(new LineBorder(Color.black));
+        for (int i = 0; i < height; i++) {
+            for (int j= 0; j < width; j++) {
+                fieldPanel.add(game.getBoard()[j][i]);
             }
         }
-        gamePanel.add(infoPanel);
+        gamePanel.add(BorderLayout.NORTH, infoPanel);
+        gamePanel.add(BorderLayout.WEST, Box.createRigidArea(new Dimension(30, 30)));
+        gamePanel.add(BorderLayout.EAST, Box.createRigidArea(new Dimension(30, 30)));
         gamePanel.add(Box.createRigidArea(new Dimension(width * Square.side(), 30)));
-        gamePanel.add(fieldPanel);
-        gameFrame.add(gamePanel);
-        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gameFrame.setVisible(true);
+        gamePanel.add(BorderLayout.CENTER, fieldPanel);
+        gameFrame.getContentPane().add(gamePanel);
+        gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         gameFrame.pack();
+        gameFrame.setResizable(false);
         gameFrame.setLocationRelativeTo(null);
+        gameFrame.setVisible(true);
     }
 
     class DefaultListener implements ActionListener {
