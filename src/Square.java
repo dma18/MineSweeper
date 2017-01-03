@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Created by danie on 12/20/2016.
@@ -15,7 +14,6 @@ public class Square extends JToggleButton {
     private boolean revealed = false;
     private boolean isMine = false;
 
-    //TODO Set icons
     public Square(int x, int y) {
         super();
         this.x = x;

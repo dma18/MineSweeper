@@ -14,23 +14,35 @@ public class Main {
     private final int MAX_DIM = 30;
     private final int MIN_MINES = 15;
     private final int MAX_MINES = 100;
+    private int currWidth, currHeight, currMines;
     private JFrame frame;
+    private static JFrame end;
     private static JFrame gameFrame;
     private JPanel mainPanel;
+    private static JPanel backPanel, restartPanel;
     private JSlider width, height, mines;
-    private JLabel currWidth, currHeight, currMines;
-    private JButton easy, medium, difficult, back;
+    private JLabel currWidthLabel, currHeightLabel, currMinesLabel;
+    private JButton easy, medium, difficult, backButton, restartButton;
     private Game game;
-
-    public static JFrame getGameFrame() {
-        return gameFrame;
-    }
 
     public static void main(String[] args) {
         Main game = new Main();
         game.go();
     }
 
+    void buildBackRestart() {
+        backPanel = new JPanel();
+        backPanel.setLayout(new BoxLayout(backPanel, BoxLayout.Y_AXIS));
+        backButton = new JButton(new ImageIcon(this.getClass().getResource("/back.png")));
+        backPanel.add(backButton);
+        backButton.addActionListener(new BackListener());
+
+        restartPanel = new JPanel();
+        restartPanel.setLayout(new BoxLayout(restartPanel, BoxLayout.Y_AXIS));
+        restartButton = new JButton(new ImageIcon(this.getClass().getResource("/restart.png")));
+        restartPanel.add(restartButton);
+        restartButton.addActionListener(new RestartListener());
+    }
     void go() {
         if (frame != null && mainPanel != null) {
             frame.removeAll();
@@ -58,9 +70,9 @@ public class Main {
         customHeight.setAlignmentX(Component.LEFT_ALIGNMENT);
         customMines.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        currWidth = new JLabel(Integer.toString(MIN_DIM));
-        currHeight = new JLabel(Integer.toString(MIN_DIM));
-        currMines = new JLabel(Integer.toString(MIN_MINES));
+        currWidthLabel = new JLabel(Integer.toString(MIN_DIM));
+        currHeightLabel = new JLabel(Integer.toString(MIN_DIM));
+        currMinesLabel = new JLabel(Integer.toString(MIN_MINES));
 
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setTitle("MineSweeper");
@@ -108,11 +120,11 @@ public class Main {
         defaultPanel.add(Box.createRigidArea(new Dimension(10, 20)));
         defaultPanel.add(custom);
         customWidth.add(width);
-        customWidth.add(currWidth);
+        customWidth.add(currWidthLabel);
         customHeight.add(height);
-        customHeight.add(currHeight);
+        customHeight.add(currHeightLabel);
         customMines.add(mines);
-        customMines.add(currMines);
+        customMines.add(currMinesLabel);
 
         customPanel.setMinimumSize(new Dimension(250, 200));
         customPanel.setMaximumSize(new Dimension(250, 200));
@@ -133,6 +145,10 @@ public class Main {
     }
 
     void startGame(int width, int height, int numMines) {
+        currWidth = width;
+        currHeight = height;
+        currMines = numMines;
+        buildBackRestart();
         frame.setVisible(false);
         gameFrame = new JFrame("MineSweeper");
         game = new Game(width, height, numMines);
@@ -164,13 +180,34 @@ public class Main {
         gamePanel.add(Box.createRigidArea(new Dimension(width * Square.side(), 30)));
         gamePanel.add(BorderLayout.CENTER, fieldPanel);
         gameFrame.getContentPane().add(gamePanel);
-        gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.pack();
         gameFrame.setResizable(false);
         gameFrame.setLocationRelativeTo(null);
         gameFrame.setVisible(true);
     }
 
+    public static void gameOver(boolean win) {
+        end = new JFrame();
+        JLabel endLabel = new JLabel();
+        JPanel backRestart = new JPanel();
+        backRestart.add(backPanel);
+        backRestart.add(restartPanel);
+        if (win) {
+            end.setTitle("You won!");
+            endLabel.setText("You won!");
+        } else {
+            end.setTitle("You lose!");
+            endLabel.setText("You lost!");
+        }
+        end.add(BorderLayout.CENTER, endLabel);
+        end.add(BorderLayout.SOUTH, backRestart);
+        end.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        end.pack();
+        end.setLocationRelativeTo(null);
+        end.setVisible(true);
+        //Main.getGameFrame().getContentPane().removeAll();
+    }
     class DefaultListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             JButton source = (JButton) event.getSource();
@@ -194,13 +231,28 @@ public class Main {
         public void stateChanged(ChangeEvent e) {
             JSlider source = (JSlider) e.getSource();
             if (source.equals(width)) {
-                currWidth.setText(Integer.toString(source.getValue()));
+                currWidthLabel.setText(Integer.toString(source.getValue()));
             } else if (source.equals(height)) {
-                currHeight.setText(Integer.toString(source.getValue()));
+                currHeightLabel.setText(Integer.toString(source.getValue()));
             } else if (source.equals(mines)) {
-                currMines.setText(Integer.toString(source.getValue()));
+                currMinesLabel.setText(Integer.toString(source.getValue()));
             }
         }
     }
 
+    class RestartListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            gameFrame.setVisible(false);
+            end.setVisible(false);
+            startGame(currWidth, currHeight, currMines);
+        }
+    }
+
+    class BackListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            gameFrame.setVisible(false);
+            end.setVisible(false);
+            go();
+        }
+    }
 }

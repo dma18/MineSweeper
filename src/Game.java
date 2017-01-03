@@ -234,20 +234,6 @@ public class Game {
         for (Square s : mines) {
             s.reveal();
         }
-        JFrame end = new JFrame();
-        JLabel endLabel = new JLabel();
-        if (win) {
-            end.setTitle("You won!");
-            endLabel.setText("You won!");
-        } else {
-            end.setTitle("You lose!");
-            endLabel.setText("You lost!");
-        }
-        end.add(BorderLayout.CENTER, endLabel);
-        end.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        end.pack();
-        end.setLocationRelativeTo(null);
-        end.setVisible(true);
-        //Main.getGameFrame().getContentPane().removeAll();
+        Main.gameOver(win);
     }
 }
