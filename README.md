@@ -1,6 +1,8 @@
 # MineSweeper
 A clone of the classic Microsoft game Minesweeper using OOP and Swing GUI.
 
+To play, download and execute the jar file.
+
 ![game](/screenshots/game.png?raw=true "Game")
 
 To win, reveal all the squares that aren't mines.
